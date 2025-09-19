@@ -21,8 +21,8 @@ ABUSIVE_WORDS = [
 ]
 
 def generate_fuzzy_pattern(word):
-    """Generate a regex pattern that matches the word with repeated characters."""
-    return ''.join(f'{re.escape(c)}+?' for c in word)
+    """Generate a regex pattern that matches the word with repeated characters and optional '*' insertions."""
+    return ''.join(f'{re.escape(c)}+?\\*?' for c in word)
 
 ABUSIVE_PATTERNS = [generate_fuzzy_pattern(word) for word in ABUSIVE_WORDS]
 

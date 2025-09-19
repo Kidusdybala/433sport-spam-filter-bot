@@ -2,7 +2,7 @@ import logging
 import re
 import asyncio
 from telegram import Update
-from telegram.ext import ApplicationBuilder, ContextTypes, MessageHandler, filters
+from telegram.ext import ApplicationBuilder, ContextTypes, MessageHandler, CommandHandler, filters
 
 # Bot token from Telegram
 TOKEN = '8363894608:AAHZCyI_dWP4OtMxLP-w1claLf8P6G1G5JQ'
@@ -50,9 +50,16 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 except Exception as e:
                     logging.error(f"Failed to delete message: {e}")
 
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Send a welcome message when the /start command is issued."""
+    await update.message.reply_text("Welcome to the Spam Filter Bot! I help keep chats clean by filtering abusive messages.")
+
 if __name__ == '__main__':
     # Build the application
     application = ApplicationBuilder().token(TOKEN).build()
+
+    # Add start command handler
+    application.add_handler(CommandHandler("start", start))
 
     # Add message handler
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))

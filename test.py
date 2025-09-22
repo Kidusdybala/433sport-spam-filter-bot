@@ -20,7 +20,7 @@ def generate_fuzzy_pattern(word):
 ABUSIVE_PATTERNS = [generate_fuzzy_pattern(word) for word in ABUSIVE_WORDS]
 
 # The message to test
-message = "warki setwat"
+message = "hey guys its not about muslim or christianity gn esraeln mtdegfu sewoch hilina yinurachu gaza ley emimotew eko dmet adelem sew enji christianity eko gdel aylm degmo esrael eko eske ahun chraistosn matak hager nech"
 text = message.lower()
 
 # Check which patterns match
@@ -32,4 +32,7 @@ for i, (word, pattern) in enumerate(zip(ABUSIVE_WORDS, ABUSIVE_PATTERNS)):
 print("Matching abusive word indices:")
 for idx in matching_indices:
     print(idx)
+print("Matching words:")
+for idx in matching_indices:
+    print(ABUSIVE_WORDS[idx])
 print("Total matches:", len(matching_indices))

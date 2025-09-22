@@ -17,7 +17,8 @@ ABUSIVE_WORDS = [
     'gim', 'ግም', 'tenb', 'tnb', 'ላም', 'ላሟ', 'lam', 'lemagn', 'ለማኝ', 'ዲቻ', 'ቆቦ',
     'ወሸላ', 'የለማኝ ልጅ', 'yelemagn lej', 'ሸርሙጣ', 'ቡሽጢ', 'ቡሽቲ', 'bushti', 'jezba', 'ጀዝባ', 'እከካም', 'እከክ', 'ekekam', 'ekek', 'tija', 'ጥጃ', 'ዝንጀሮ', 'zenjero',
     'ቡሌ', 'ሌስትሮ', 'ሊስትሮ', 'ቆሎ', 'ሸታታ', 'የሚሸት', 'ፋንድያ', 'qolo', 'shetata', 'yemishet', 'listro', 'entenh', 'እንትንህ', 'አይምሮህ', '🧠', 'denez', 'dengay', 'ደነዝ', 'ድንጋይ', 'tnbu', 'sedb', 'ስድብ', 'temar', 'ተማር', 'temr', 'ፓንት', 'አዟሪ', 'pant', 'azuari', 'beg', 'በግ', 'ግመል', 'camel', 'gemel', 'መሃይቡ', 'መሀይሙ', 'mehaymu', 'terfrafi', 'ትርፍራፊ', 'ከብት', 'kebt', 'ሽማግሌ', 'በክት', 'bekt', 'jel', 'ጅል', 'ላጭቼ', 'ላጭ', 'ቂንጥር', 'ቆለጥ', 'እንዳልቨዳ', 'ጭቅቅታም',
-    'ሸሌ', 'ጭገር', 'ጥንብ', 'ሸተቱ', 'ቆሻሻ', 'እበት', 'ሹጢ', 'ደደብ', 'ተበጂ', 'ጡት', 'ኩበት', 'ጡቷ', 'wsha', 'ይከኩህ', 'ልደክለልሀ', 'ዲቻው', 'wusha', 'ይደክሉህ'
+    'ሸሌ', 'ጭገር', 'ጥንብ', 'ሸተቱ', 'ቆሻሻ', 'እበት', 'ሹጢ', 'ደደብ', 'ተበጂ', 'ጡት', 'ኩበት', 'ጡቷ', 'wsha', 'ይከኩህ', 'ልደክለልሀ', 'ዲቻው', 'wusha', 'ይደክሉህ',
+    'atbdada', 'jil', 'gimatatam'
 ]
 
 def generate_fuzzy_pattern(word):
@@ -41,6 +42,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             text = update.message.text.lower()
             # Check if any abusive pattern matches in the message
             if any(re.search(pattern, text, re.IGNORECASE) for pattern in ABUSIVE_PATTERNS):
+                logging.info(f"Detected abusive message: '{text}' in chat {chat.id}")
                 try:
                     # Delete the message
                     await context.bot.delete_message(

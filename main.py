@@ -35,23 +35,33 @@ logging.basicConfig(
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle incoming messages and delete if they contain abusive words."""
+    logging.info(f"Received message update: {update}")
     if update.message and update.message.text:
         chat = update.message.chat
+        logging.info(f"Message from chat {chat.id}, type: {chat.type}, text: '{update.message.text}'")
         # Only process messages in groups/supergroups
         if chat.type in ['group', 'supergroup']:
             text = update.message.text.lower()
+            logging.info(f"Processing message in group/supergroup: '{text}'")
             # Check if any abusive pattern matches in the message
-            if any(re.search(pattern, text, re.IGNORECASE) for pattern in ABUSIVE_PATTERNS):
-                logging.info(f"Detected abusive message: '{text}' in chat {chat.id}")
+            matching_patterns = [pattern for pattern in ABUSIVE_PATTERNS if re.search(pattern, text, re.IGNORECASE)]
+            if matching_patterns:
+                logging.info(f"Detected abusive message: '{text}' in chat {chat.id}, matching patterns: {len(matching_patterns)}")
                 try:
                     # Delete the message
                     await context.bot.delete_message(
                         chat_id=chat.id,
                         message_id=update.message.message_id
                     )
-                    logging.info(f"Deleted abusive message in chat {chat.id}")
+                    logging.info(f"Successfully deleted abusive message in chat {chat.id}")
                 except Exception as e:
-                    logging.error(f"Failed to delete message: {e}")
+                    logging.error(f"Failed to delete message in chat {chat.id}: {e}")
+            else:
+                logging.info(f"No abusive content detected in message: '{text}'")
+        else:
+            logging.info(f"Ignoring message from non-group chat: {chat.type}")
+    else:
+        logging.info("Received update without message or text")
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Send a welcome message with interactive buttons when the /start command is issued."""

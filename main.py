@@ -4,8 +4,13 @@ import asyncio
 from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import ApplicationBuilder, ContextTypes, MessageHandler, CommandHandler, CallbackQueryHandler, filters
 
+import os
+
 # Bot token from Telegram
-TOKEN = '8363894608:AAHZCyI_dWP4OtMxLP-w1claLf8P6G1G5JQ'
+TOKEN = os.getenv('TELEGRAM_TOKEN')
+
+if not TOKEN:
+    raise ValueError("No TELEGRAM_TOKEN found in environment variables")
 
 # List of abusive words (add more as needed)
 ABUSIVE_WORDS = [
@@ -30,7 +35,7 @@ ABUSIVE_PATTERNS = [generate_fuzzy_pattern(word) for word in ABUSIVE_WORDS]
 # Set up logging
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.INFO
+    level=logging.WARNING
 )
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -44,16 +49,17 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             text = update.message.text.lower()
             logging.info(f"Processing message in group/supergroup: '{text}'")
             # Check if any abusive pattern matches in the message
-            matching_patterns = [pattern for pattern in ABUSIVE_PATTERNS if re.search(pattern, text, re.IGNORECASE)]
-            if matching_patterns:
-                logging.info(f"Detected abusive message: '{text}' in chat {chat.id}, matching patterns: {len(matching_patterns)}")
+            matching_indices = [i for i, pattern in enumerate(ABUSIVE_PATTERNS) if re.search(pattern, text, re.IGNORECASE)]
+            if matching_indices:
+                matching_words = [ABUSIVE_WORDS[i] for i in matching_indices]
+                logging.warning(f"Detected abusive message in chat {chat.id}, matching words: {matching_words}")
                 try:
                     # Delete the message
                     await context.bot.delete_message(
                         chat_id=chat.id,
                         message_id=update.message.message_id
                     )
-                    logging.info(f"Successfully deleted abusive message in chat {chat.id}")
+                    logging.warning(f"Successfully deleted abusive message in chat {chat.id}")
                 except Exception as e:
                     logging.error(f"Failed to delete message in chat {chat.id}: {e}")
             else:

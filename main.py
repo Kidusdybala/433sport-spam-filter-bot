@@ -89,5 +89,24 @@ if __name__ == '__main__':
     # Add message handler
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
+    # Start dummy web server for Render
+    from http.server import HTTPServer, BaseHTTPRequestHandler
+    import threading
+
+    class HealthCheckHandler(BaseHTTPRequestHandler):
+        def do_GET(self):
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(b"Bot is running")
+
+    def run_health_check():
+        port = int(os.environ.get("PORT", 8080))
+        server = HTTPServer(('0.0.0.0', port), HealthCheckHandler)
+        print(f"Health check server running on port {port}")
+        server.serve_forever()
+
+    # Start web server in background thread
+    threading.Thread(target=run_health_check, daemon=True).start()
+
     # Start the bot
     application.run_polling()

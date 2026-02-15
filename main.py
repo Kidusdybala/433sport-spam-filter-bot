@@ -84,8 +84,8 @@ if __name__ == '__main__':
     # Start keep-alive server for Render free tier
     keep_alive()
     
-    # Build the application
-    application = ApplicationBuilder().token(TOKEN).build()
+    # Build the application with increased timeout settings to fix ReadError
+    application = ApplicationBuilder().token(TOKEN).read_timeout(30).write_timeout(30).connect_timeout(30).build()
 
     # Add start command handler
     application.add_handler(CommandHandler("start", start))

@@ -5,7 +5,6 @@ from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import ApplicationBuilder, ContextTypes, MessageHandler, CommandHandler, CallbackQueryHandler, filters
 
 import os
-from keep_alive import keep_alive
 
 # Bot token from Telegram
 TOKEN = os.getenv('TELEGRAM_TOKEN')
@@ -81,9 +80,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Welcome to the Spam Filter Bot! I help keep chats clean by filtering abusive messages. Choose an option:", reply_markup=reply_markup)
 
 if __name__ == '__main__':
-    # Start keep-alive server for Render free tier
-    keep_alive()
-    
     # Build the application
     application = ApplicationBuilder().token(TOKEN).build()
 
@@ -93,6 +89,6 @@ if __name__ == '__main__':
     # Add message handler
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
-    # Start the bot
-    print("Starting Telegram bot...")
+    # Start the bot with polling (PythonAnywhere compatible)
+    print("Bot is starting...")
     application.run_polling()
